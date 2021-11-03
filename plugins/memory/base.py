@@ -15,6 +15,12 @@ class AbstractMemoryPlugin:
         """
         raise NotImplementedError
 
+    async def product_has_no_subscribers(self, product_id: str) -> bool:
+        """
+        Returns True if product has no subscribers
+        """
+        raise NotImplementedError
+
     async def subscribe(self, product_id: str, chat_id: int) -> None:
         """
         Subscribe chat id to specific product and store

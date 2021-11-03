@@ -8,7 +8,7 @@ class InMemoryPlugin(AbstractMemoryPlugin):
     async def get_all_products(self) -> list:
         return self._data.copy()
 
-    async def product_has_no_subscribers(self, product_id: str):
+    async def product_has_no_subscribers(self, product_id: str) -> bool:
         for key in self._data[product_id]:
             if not self._data[product_id][key] == set():
                 return False

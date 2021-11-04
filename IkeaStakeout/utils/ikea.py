@@ -29,6 +29,18 @@ async def is_product_in_stock(product_id: str, store_id: str) -> bool:
                 return False
         return False
 
+async def get_list_of_stores_with_stock(product_id: str) -> list:
+    """
+    Get list of stores with stock
+    """
+    data = await get_product_stock(product_id)
+    stores = []
+    for store in data:
+        if store['store_id']['status'] == IKEA_PRODUCT_IN_STOCK_STATUS:
+            stores.append(store['store_id'])
+    return stores
+
+
 
 async def search_product_by_product_number(product_number: str) -> str:
     """

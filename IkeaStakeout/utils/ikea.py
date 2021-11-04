@@ -40,6 +40,15 @@ async def get_list_of_stores_with_stock(product_id: str) -> list:
             stores.append(store['store_id'])
     return stores
 
+async def get_list_of_stores_with_id(product_id: str) -> list:
+    """
+    Get list of stores
+    """
+    data = await get_product_stock(product_id)
+    stores = []
+    for store in data:
+        stores.append({"store_name" : store['store_name'], "store_id" : store['store_id']})
+    return stores
 
 
 async def search_product_by_product_number(product_number: str) -> str:

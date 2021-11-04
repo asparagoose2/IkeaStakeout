@@ -1,3 +1,4 @@
+import logging
 import aiohttp
 
 from IkeaStakeout.consts import IKEA_STOCK_API, IKEA_PRODUCT_IN_STOCK_STATUS, IKEA_SYNONYM_API_URL
@@ -36,7 +37,7 @@ async def get_list_of_stores_with_stock(product_id: str) -> list:
     data = await get_product_stock(product_id)
     stores = []
     for store in data:
-        if store['store_id']['status'] == IKEA_PRODUCT_IN_STOCK_STATUS:
+        if store['status'] == IKEA_PRODUCT_IN_STOCK_STATUS:
             stores.append(store['store_id'])
     return stores
 
@@ -44,6 +45,7 @@ async def get_list_of_stores_with_id(product_id: str) -> list:
     """
     Get list of stores
     """
+    logging.info(f'Getting list of stores with id {product_id}')
     data = await get_product_stock(product_id)
     stores = []
     for store in data:
@@ -58,7 +60,7 @@ async def search_product_by_product_number(product_number: str) -> str:
     async with aiohttp.ClientSession() as session:
         async with session.get(IKEA_SYNONYM_API_URL.format(product_number=product_number)) as response:
             result = await response.json()
-            if result['ngroups'] < 1:
+            if result['grouped']['FamilyName_s']['ngroups'] < 1:
                 return None
-            return result['groups'][0]['doclist']['docs'][0]['product_id_i']
+            return result['grouped']['FamilyName_s']['groups'][0]['doclist']['docs'][0]['product_id_i']
 

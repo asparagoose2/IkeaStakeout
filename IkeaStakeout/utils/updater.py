@@ -27,10 +27,11 @@ async def update_forever(bot: Bot, memory_plugin: AbstractMemoryPlugin):
     """
     while True:
         for product_id in await memory_plugin.get_all_products():
-            logging.debug(f'Checking if {product_id} is now in stock!')
+            logging.info(f'Checking if {product_id} is now in stock!')
+            logging.info(await get_list_of_stores_with_stock(product_id))
             for store_id in await get_list_of_stores_with_stock(product_id):
-                store_name = memory_plugin.get_store_name(store_id)
-                logging.debug(f'{product_id} is now in stock in {store_name}! updating subscribers')
+                store_name = await memory_plugin.get_store_name(store_id)
+                logging.info(f'{product_id} is now in stock in {store_name}! updating subscribers')
                 for chat_id in await memory_plugin.get_chat_ids_for_product(product_id,store_id):
                     await update_subscriber(bot, chat_id, memory_plugin, store_name, product_id, store_id)
         await asyncio.sleep(UPDATE_INTERVAL_IN_SECONDS)

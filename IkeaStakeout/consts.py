@@ -13,3 +13,4 @@ IKEA_SYNONYM_API_URL = 'https://www.ikea.co.il/api/solr?defType=synonym_edismax&
 IKEA_STOCK_API = 'https://www.ikea.co.il/api/public/productStockStatus/{product_id}.json'
 IKEA_PRODUCT_IN_STOCK_STATUS = 0
 
+IKEASTAKEOUT_API_TOKEN_KEY = "IKEASTAKEOUT TOKEN"

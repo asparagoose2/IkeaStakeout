@@ -32,5 +32,5 @@ class InMemoryPlugin(AbstractMemoryPlugin):
 
     async def unsubscribe(self, product_id: str, store_id: str, chat_id: int) -> None:
         self._data[product_id][store_id].discard(chat_id)
-        if product_id in self._data and self.product_has_no_subscribers(product_id):
+        if product_id in self._data and await self.product_has_no_subscribers(product_id):
             self._data.pop(product_id)

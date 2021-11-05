@@ -4,6 +4,8 @@ import aiohttp
 from IkeaStakeout.consts import IKEA_STOCK_API, IKEA_PRODUCT_IN_STOCK_STATUS, IKEA_SYNONYM_API_URL
 from IkeaStakeout.exceptions import ProductWasNotFoundException
 
+# product_id : ikea's internal product id
+# product_number : published ikea product/part number
 
 async def get_product_stock(product_id: str) -> dict:
     """
@@ -43,7 +45,7 @@ async def get_list_of_stores_with_stock(product_id: str) -> list:
 
 async def get_list_of_stores_with_id(product_id: str) -> list:
     """
-    Get list of stores
+    Get list of stores with product if
     """
     logging.info(f'Getting list of stores with id {product_id}')
     data = await get_product_stock(product_id)
@@ -52,10 +54,18 @@ async def get_list_of_stores_with_id(product_id: str) -> list:
         stores.append({"store_name" : store['store_name'], "store_id" : store['store_id']})
     return stores
 
-
-async def search_product_by_product_number(product_number: str) -> str:
+async def get_list_of_stores_with_number(product_number: str) -> list:
     """
-    Search product by product number
+    Get list of stores with product number
+    """
+    logging.info(f'Getting list of stores with number {product_number}')
+    product_id = await get_product_id_by_product_number(product_number)
+    return await get_list_of_stores_with_id(product_id)
+
+
+async def get_product_id_by_product_number(product_number: str) -> str:
+    """
+    Search product by product_number and returns the product_id
     """
     async with aiohttp.ClientSession() as session:
         async with session.get(IKEA_SYNONYM_API_URL.format(product_number=product_number)) as response:

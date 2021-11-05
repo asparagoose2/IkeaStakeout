@@ -6,7 +6,7 @@ from aiogram import types, Dispatcher, Bot
 
 from IkeaStakeout.consts import  WILL_UPDATE_MSG, WELCOME_MSG, CHOOSE_STORE_MSG,PRODUCT_NOT_FOUND_MSG
 from IkeaStakeout.plugins import AbstractMemoryPlugin
-from IkeaStakeout.utils.ikea import get_list_of_stores_with_id, search_product_by_product_number
+from IkeaStakeout.utils.ikea import get_list_of_stores_with_number, get_product_id_by_product_number
 
 
 def keyboard_maker(stores: list, product_id: str):
@@ -30,10 +30,10 @@ async def check_status(message: types.Message, memory_plugin: AbstractMemoryPlug
 
     stores = None
     try:
-        product_id = await search_product_by_product_number(message.text)
-        logging.info(f'Product id is {product_id}')
-        stores = await get_list_of_stores_with_id(product_id)
-        kb = keyboard_maker(stores, product_id)
+        product_number = message.text
+        logging.info(f'Product number is {product_number}')
+        stores = await get_list_of_stores_with_number(product_number)
+        kb = keyboard_maker(stores, product_number)
         await message.answer(CHOOSE_STORE_MSG, reply_markup=kb)
     except Exception as e:
         logging.error(f'Error while getting venue status for {message.text}')
@@ -46,7 +46,7 @@ async def inline_kb_answer_callback_handler(query: types.CallbackQuery, memory_p
     store = query.data.split('/')[1]
     
     if not await memory_plugin.get_store_name(store):
-        await update_stores_dict(await get_list_of_stores_with_id(product), memory_plugin)
+        await update_stores_dict(await get_list_of_stores_with_number(product), memory_plugin)
 
     await bot.send_message(query.from_user.id, WILL_UPDATE_MSG.format(store_name=await memory_plugin.get_store_name(store), product_id=product))
     await memory_plugin.subscribe(product, store, query.from_user.id)
